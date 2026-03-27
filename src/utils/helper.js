@@ -38,11 +38,11 @@ export const isTodayOrNo = (date) => { //for the today view page
 }
 
 export const generateTaskId = () => {
-    return `task_${Date.now()}_${Math.random().toString(36).substr(2,9)}`;
+    return `task_${Date.now()}_${Math.random().toString(36).slice(2,11)}`;
     //Math.random(): Generates a random decimal,
     // .toString(36): Converts that decimal into Base 36. Base 36 uses numbers (0-9) and letters (a-z).
     //Example: 0.12345 becomes something like 0.4f3g...
-    // .substr(2, 9): Removes the leading 0. and takes the next 9 characters.
+    // .slice(2, 11): start from index 2 to index 11 this takes the next 9 characters after index 2.
 }
 
 export const sortTaskByDueDate = (tasks) => {
