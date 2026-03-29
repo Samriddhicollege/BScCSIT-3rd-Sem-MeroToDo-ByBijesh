@@ -12,6 +12,7 @@ export const Navbar = () => {
     const { toggleTheme, theme } = useTheme();
     const { addTask, categories } = useTaskContext();
     const [showForm, setShowForm] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const handleAddTask = (taskData) => {
         if (!taskData.title.trim()) return;  // Validate
@@ -21,6 +22,10 @@ export const Navbar = () => {
         }
         addTask(taskData);
         setShowForm(false);
+    }
+
+    const handleNavClick = () => {
+        setShowMobileMenu(false); // Close menu when a link is clicked
     }
 
     return (
@@ -33,24 +38,24 @@ export const Navbar = () => {
                         <span className="logo-text">MeroToDo</span>
                     </Link>
 
-                    <ul className="nav-menu">
+                    <ul className={`nav-menu ${showMobileMenu ? 'active' : ''}`}>
                         <li>
-                            <Link to={"/"}>
+                            <Link to={"/"} onClick={handleNavClick}>
                                 All Tasks
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/today"}>
+                            <Link to={"/today"} onClick={handleNavClick}>
                                 Today
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/trash"}>
+                            <Link to={"/trash"} onClick={handleNavClick}>
                                 Trash
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/settings"}>
+                            <Link to={"/settings"} onClick={handleNavClick}>
                                 Settings
                             </Link>
                         </li>
@@ -61,7 +66,15 @@ export const Navbar = () => {
                         <button className="btn-theme" onClick={toggleTheme}>
                             {theme === "light" ? '🌙' : '☀️'}
                         </button>
-
+                        <button
+                            className={`btn-hamburger ${showMobileMenu ? 'active' : ''}`}
+                            onClick={() => setShowMobileMenu(!showMobileMenu)}
+                            aria-label="Toggle navigation menu"
+                        >
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
                     </div>
                 </div>
             </nav>
