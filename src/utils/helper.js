@@ -45,13 +45,17 @@ export const generateTaskId = () => {
     // .slice(2, 11): start from index 2 to index 11 this takes the next 9 characters after index 2.
 }
 
-export const sortTaskByDueDate = (tasks) => {
+export const sortTasksByPriority = (tasks) => {
     const priorityOrder = { "High": 0, "Medium": 1, "Low": 2 }; //here making keys literal strings
     return [...tasks].sort((a,b) => priorityOrder[a.priority] - priorityOrder[b.priority]); //object["lookupKey"] is a Square Bracket Notation (or Key-Value Lookup).
     //If a.priority is "High", then priorityOrder["High"] becomes 0. cuz its looking for the value of the matched key in object
     //using [...tasks] to create new array to avoid mutating original tasks array
     //sort((a,b)=> a-b), here a is 1st element and b is 2nd element, and both are incremented to next position when the current sort is done
     //sort is done in this manner: if a-b is -ve then a comes before b, if a-b is +ve then b comes before a, if a-b is 0 then they remain unchanged
+}
+
+export const sortTasksByDueDate = (tasks) => {
+
 }
 
 export const filterTasksBySearchTerm = (tasks, searchTerm) => {
