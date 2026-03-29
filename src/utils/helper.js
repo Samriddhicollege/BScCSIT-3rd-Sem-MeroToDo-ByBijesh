@@ -26,9 +26,9 @@ export const isToday = (date) => {
 export const isOverdue = (date, completed) => {
     if (!date || completed) return false; //if date isnt provided, or if task is completed, its not overdue
     const today = new Date();
-    today.setHours(0,0,0,0); // Set time to the start of the day i,e, 00:00:00:00 (hrs, mins, secs, ms) for accurate comparison
+    today.setHours(0, 0, 0, 0); // Set time to the start of the day i,e, 00:00:00:00 (hrs, mins, secs, ms) for accurate comparison
     const taskDate = new Date(date);
-    taskDate.setHours(0,0,0,0);
+    taskDate.setHours(0, 0, 0, 0);
     return taskDate < today; //checking if task date is already passed based on today
 }
 
@@ -38,7 +38,7 @@ export const isTodayOrNo = (date) => { //for the today view page
 }
 
 export const generateTaskId = () => {
-    return `task_${Date.now()}_${Math.random().toString(36).slice(2,11)}`;
+    return `task_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
     //Math.random(): Generates a random decimal,
     // .toString(36): Converts that decimal into Base 36. Base 36 uses numbers (0-9) and letters (a-z).
     //Example: 0.12345 becomes something like 0.4f3g...
@@ -47,7 +47,7 @@ export const generateTaskId = () => {
 
 export const sortTasksByPriority = (tasks) => {
     const priorityOrder = { "High": 0, "Medium": 1, "Low": 2 }; //here making keys literal strings
-    return [...tasks].sort((a,b) => priorityOrder[a.priority] - priorityOrder[b.priority]); //object["lookupKey"] is a Square Bracket Notation (or Key-Value Lookup).
+    return [...tasks].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]); //object["lookupKey"] is a Square Bracket Notation (or Key-Value Lookup).
     //If a.priority is "High", then priorityOrder["High"] becomes 0. cuz its looking for the value of the matched key in object
     //using [...tasks] to create new array to avoid mutating original tasks array
     //sort((a,b)=> a-b), here a is 1st element and b is 2nd element, and both are incremented to next position when the current sort is done
@@ -55,14 +55,19 @@ export const sortTasksByPriority = (tasks) => {
 }
 
 export const sortTasksByDueDate = (tasks) => {
-
+    return [...tasks].sort((a, b) => {
+        if (!a.dueDate && !b.dueDate) return 0; //if both tasks dont have due date, they are considered equal in sorting
+        if (!a.dueDate) return 1; //if task a doesnt have due date, it should come after task b
+        if (!b.dueDate) return -1; //if task b doesnt have due date, it should come after task a
+        return new Date(a.dueDate) - new Date(b.dueDate); //if both tasks have due date, we sort them based on their due date. earlier due date comes first
+    })
 }
 
 export const filterTasksBySearchTerm = (tasks, searchTerm) => {
     if (!searchTerm) return tasks; //if search term is empty, return all tasks
     const term = searchTerm.toLowerCase();
     return tasks.filter(
-        task => task.title.toLowerCase().includes(term) ||  ( task.description && task.description.toLowerCase().includes(term) )
+        task => task.title.toLowerCase().includes(term) || (task.description && task.description.toLowerCase().includes(term))
         //checking if task title or description includes the search term, and also handling case where description might be undefined
     )
 }
@@ -70,9 +75,9 @@ export const filterTasksBySearchTerm = (tasks, searchTerm) => {
 export const getDaysUntilDue = (dueDate) => {
     if (!dueDate) return null;
     const today = new Date();
-    today.setHours(0,0,0,0); // Set time to the start of the day for accurate comparison
+    today.setHours(0, 0, 0, 0); // Set time to the start of the day for accurate comparison
     const taskDate = new Date(dueDate);
-    taskDate.setHours(0,0,0,0);
+    taskDate.setHours(0, 0, 0, 0);
     const diffTime = taskDate - today; //difference in milliseconds
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); //converting milliseconds to days
     return diffDays;
