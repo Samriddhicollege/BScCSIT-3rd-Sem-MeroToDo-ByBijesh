@@ -171,6 +171,18 @@ export const TaskProvider = ({ children }) => {
         });
     }, []);
 
+    const clearAllData = useCallback(() => {
+        dispatch({
+            type: "SET_INITIAL_STATE",
+            payload: {
+                tasks: [],
+                trash: [],
+                categories: DEFAULT_CATEGORIES,
+            },
+        });
+        localStorage.clear();
+    }, []);
+
     const value = {
         tasks: state.tasks,
         trash: state.trash,
@@ -182,6 +194,7 @@ export const TaskProvider = ({ children }) => {
         emptyTrash,
         addCategory,
         toggleTaskComplete,
+        clearAllData
     };
 
     return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>
