@@ -15,7 +15,7 @@ export const useDebounce = (value, delay) => { //here value will be the key pres
 
             // this is a cleanup fn (rn return fn of the useffect callback fn) will run right before the next useEffect is triggered, cuz the previous callbacck fn of useeffect needs to be finished executing before next useeffect triggers
             return () => clearTimeout(handler); //here cleartimeout the timer whose id is "value contained by handler" 
-        }
+        }, [value, delay]
     )
 
     return debouncedValue; //this is the value that will be used in the component, it will only update after the "delay" has passed since the last change to "value"
