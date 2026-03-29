@@ -16,9 +16,7 @@ function App() {
         <Router>
           <Routes>
             {/* layout route: wraps all pages with navbar and footer */}
-            <Route element={<AllTasks />} >
-              <Route index element={<AllTasks />} />
-            </Route>
+            <Route path="/" element={<AllTasks />} />
 
             <Route path='/today' element={<TodayView />} />
             <Route path='/category/:id' element={<CategoryView />} />

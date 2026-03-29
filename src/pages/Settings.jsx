@@ -111,7 +111,7 @@ export const Settings = () => {
                         </button>
                         <button
                             className="btn-delete-confirm"
-
+                            onClick={handleClearData}
                         >
                             Clear All Data
                         </button>

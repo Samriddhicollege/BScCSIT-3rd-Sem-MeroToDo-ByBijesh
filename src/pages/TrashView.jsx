@@ -3,6 +3,7 @@ import { useTaskContext } from "../context/TaskContext"
 import { Navbar } from "../components/Navbar"
 import { Footer } from "../components/Footer"
 import { formatDate } from "../utils/helper"
+import { Modal } from "../components/Modal"
 
 export const TrashView = () => {
     const { trash, restoreTask, emptyTrash } = useTaskContext()

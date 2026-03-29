@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router"
+import { useNavigate, useParams } from "react-router-dom"
 import { useTaskContext } from "../context/TaskContext"
 import { useCallback, useMemo } from "react"
 import { Navbar } from "../components/Navbar"
@@ -29,6 +29,9 @@ export const CategoryView = () => {
         , [categoryTasks]
     )
 
+    const handleCategoryClick = useCallback((categoryId) => {
+        navigate(`/category/${categoryId}`)
+    }, [navigate])
 
     if (!category) {
         return (
@@ -47,9 +50,7 @@ export const CategoryView = () => {
         )
     }
 
-    const handleCategoryClick = useCallback((categoryId) => {
-        navigate(`/category/${categoryId}`)
-    }, [navigate])
+    
 
     return (
         <div className="page-container">

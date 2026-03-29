@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+import {Navbar} from "../components/Navbar"
+import {Footer} from "../components/Footer"
 import { useTaskContext } from "../context/TaskContext"
 import { useCallback, useState } from "react"
 import { TaskList } from "../components/TaskList"
