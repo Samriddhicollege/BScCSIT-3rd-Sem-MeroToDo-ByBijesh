@@ -1,12 +1,14 @@
 import { useCallback, useMemo } from "react"
-import {  useTaskContext } from "../context/TaskContext"
+import { useTaskContext } from "../context/TaskContext"
 import { isTodayOrNo } from "../utils/helper"
 import { Navbar } from "../components/Navbar"
 import { Footer } from "../components/Footer"
 import { TaskList } from "../components/TaskList"
+import { useNavigate } from "react-router-dom"
 
 export const TodayView = () => {
     const { tasks } = useTaskContext()
+    const navigate = useNavigate()
 
     const todayTasks = useMemo(() => {
         return tasks.filter(task => {
@@ -23,8 +25,8 @@ export const TodayView = () => {
     }, [tasks]);
 
     const handleCategoryClick = useCallback((categoryId) => {
-        window.location.href = `/category/${categoryId}`;
-    }, []);
+        navigate(`/category/${categoryId}`);
+    }, [navigate]);
 
 
     return (

@@ -14,6 +14,11 @@ export const Navbar = () => {
     const [showForm, setShowForm] = useState(false);
 
     const handleAddTask = (taskData) => {
+        if (!taskData.title.trim()) return;  // Validate
+        if (!taskData.category) {
+            alert("Please select a category");
+            return;
+        }
         addTask(taskData);
         setShowForm(false);
     }
@@ -37,6 +42,11 @@ export const Navbar = () => {
                         <li>
                             <Link to={"/today"}>
                                 Today
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to={"/trash"}>
+                                Trash
                             </Link>
                         </li>
                         <li>

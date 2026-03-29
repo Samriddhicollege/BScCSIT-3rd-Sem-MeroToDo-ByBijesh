@@ -1,8 +1,9 @@
-import {Navbar} from "../components/Navbar"
-import {Footer} from "../components/Footer"
+import { Navbar } from "../components/Navbar"
+import { Footer } from "../components/Footer"
 import { useTaskContext } from "../context/TaskContext"
-import { useCallback, useState } from "react"
+import { useCallback, useState, useMemo } from "react"
 import { TaskList } from "../components/TaskList"
+import { useNavigate } from "react-router-dom"
 
 export const AllTasks = () => {
 
@@ -10,8 +11,16 @@ export const AllTasks = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [sortBy, setSortBy] = useState("priority")
 
-    const activeTasks = tasks.filter(task => !task.completed)
-    const completedTasks = tasks.filter(task => task.completed)
+    const activeTasks = useMemo(
+        () => tasks.filter(task => !task.completed),
+        [tasks]
+    )
+    const completedTasks = useMemo(
+        () => tasks.filter(task => task.completed),
+        [tasks]
+    )
+
+    const navigate = useNavigate()
 
     const handleSearchChange = useCallback((e) => {
         setSearchTerm(e.target.value)
@@ -28,7 +37,7 @@ export const AllTasks = () => {
             <main className="main-content">
                 <div className="page-header">
                     <h1>All Tasks</h1>
-                    <p>
+                    <p className="page-subtitle">
                         {activeTasks.length} active • {completedTasks.length} completed
                     </p>
                 </div>
@@ -78,7 +87,7 @@ export const AllTasks = () => {
                         searchTerm={searchTerm}
                         sortBy={sortBy}
                         onCategoryClick={(categoryId) => {
-                            window.location.href = `/category/${categoryId}`;
+                            navigate(`/category/${categoryId}`)
                         }}
                     />
                 </section>
@@ -92,7 +101,7 @@ export const AllTasks = () => {
                             searchTerm={searchTerm}
                             sortBy={sortBy}
                             onCategoryClick={(categoryId) => {
-                                window.location.href = `/category/${categoryId}`;
+                                navigate(`/category/${categoryId}`)
                             }}
                         />
                     </section>

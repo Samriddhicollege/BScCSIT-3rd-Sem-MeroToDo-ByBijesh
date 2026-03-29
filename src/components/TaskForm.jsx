@@ -1,35 +1,44 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { PRIORITIES, PRIORITY_LABELS } from "../utils/constants"
 import { CategoryBadge } from "./CategoryBadge";
 
-export const TaskForm = ({onSave, onClose, initialTask = null, categories = []} ) => {
-    const [formData, setFormData] = useState(
-        initialTask || {
+export const TaskForm = ({ onSave, onClose, initialTask = null, categories = [] }) => {
+    const [formData, setFormData] = useState(() => {
+        if (initialTask) {
+            return {
+                ...initialTask,
+                category: Number(initialTask.category)  // Ensure number
+            };
+        }
+        return {
             title: "",
             description: "",
-            category: categories[0]?.id || 1, //if there are categories, set the default category to the first one, otherwise set it to 1 (which is the id of default work category)
-            // ?. is optional chaining, it checks if categories[0] exists before trying to access its id property, preventing errors if the categories array is empty. if categories[0] is undefined, then categories[0]?.id will also be undefined, and the default value will be 1
+            category: categories.length ? categories[0].id : 1,
             priority: PRIORITIES.MEDIUM,
             dueDate: "",
-        }
-    );
+        };
+    });
 
     const [errors, setErrors] = useState({})
 
-    const selectedCategory = categories.find( c => c.id === parseInt(formData.category))
+    const selectedCategory = categories.find(c => c.id === parseInt(formData.category))
 
-    const handleChange = (e) => {
-        const {name, value} = e.target;
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+
+        // Convert category to number
+        const finalValue = name === "category" ? parseInt(value) : value;
+
         setFormData(prev => ({ //here we are using () => ({}) for implicit return
             ...prev,
-            [name] : value //[name] is a bracket notation for dynamic object keys. 
+            [name]: finalValue //[name] is a bracket notation for dynamic object keys. 
             // [name] uses the VALUE of the name variable as the key
-            //if name = "title" in input tag, then [name] : value will be title: value, which will update the formData.title 
+            //if name = "title" in input tag, then [name] : finalValue will be title: finalValue, which will update the formData.title 
         }))
         if (errors[name]) { //its like error["title"], so this will look up for title key in object, if title exists then its sure that the title was empty
-            setErrors(prev => ({...prev, [name]: ""})) // Clear error for the field as user types
+            setErrors(prev => ({ ...prev, [name]: "" })) // Clear error for the field as user types
         }
-    }
+    }, [errors])
 
     const validateForm = () => {
         const newErrors = {}
@@ -46,25 +55,25 @@ export const TaskForm = ({onSave, onClose, initialTask = null, categories = []} 
             onSave(formData)
         }
     }
-    
+
     return (
         <form className="task-form" onSubmit={handleSubmit}>
 
             {/* title */}
             <div className="form-group">
                 <label htmlFor="title">Task Title</label>
-                <input 
+                <input
                     type="text"
                     id="title"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
                     placeholder="Enter Task Title..."
-                    className= {errors.title ? "input-error" : ""}
-                 />
-                 {errors.title && <span className="error-text">{errors.title}</span>}
+                    className={errors.title ? "input-error" : ""}
+                />
+                {errors.title && <span className="error-text">{errors.title}</span>}
             </div>
-            
+
             {/* description */}
             <div className="form-group">
                 <label htmlFor="description">Description</label>
@@ -75,57 +84,64 @@ export const TaskForm = ({onSave, onClose, initialTask = null, categories = []} 
                     onChange={handleChange}
                     placeholder="Add task details... (Optional)"
                     rows="3"
-                 />
+                    maxLength="500"
+                />
             </div>
 
             {/* Category */}
             <div className="form-group">
                 <label htmlFor="category">Category</label>
-                <select name="category" id="category" value={formData.category} onChange={handleChange}>
-                    {
-                        categories.map(
-                            cat => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.name}
-                                </option>
-                            )
-                        )
-                    }
+                <select
+                    name="category"
+                    id="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                >
+                    {categories.length === 0 ? (
+                        <option value="">No categories available</option>
+                    ) : (
+                        categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>
+                                {cat.name}
+                            </option>
+                        ))
+                    )}
                 </select>
                 {selectedCategory && (<CategoryBadge category={selectedCategory} />)}
             </div>
-            
+
             {/* priority */}
             <div className="form-group">
-                    <label >Priority</label>
-                    <div className="priority-options">
-                        {Object.entries(PRIORITIES).map(([key, value]) => ( //object.entries returns an array of key-value pairs
-                            <label key={value} className="priority-label"> {/*key = {value} is for identifying each label uniquely */}
-                                <input 
-                                    type="radio"
-                                    name="priority"
-                                    value={value}
-                                    checked={formData.priority === value}
-                                    onChange={handleChange}
-                                />
-                                <span>{PRIORITY_LABELS[value]} </span>
-                            </label>
-                        )
+                <label htmlFor="priority">Priority</label>
+                <div className="priority-options">
+                    {Object.entries(PRIORITIES).map(([key, value]) => ( //object.entries returns an array of key-value pairs
+                        <label key={value} className="priority-label"> {/*key = {value} is for identifying each label uniquely */}
+                            <input
+                                type="radio"
+                                name="priority"
+                                value={value}
+                                checked={formData.priority === value}
+                                onChange={handleChange}
+                            />
+                            <span>{PRIORITY_LABELS[value]} </span>
+                        </label>
+                    )
 
-                        )}
-                    </div>
+                    )}
+                </div>
             </div>
-            
+
             {/* due date */}
             <div className="form-group">
                 <label htmlFor="dueDate">Due Date</label>
-                <input 
-                    type="date" 
-                    name="dueDate" 
+                <input
+                    type="date"
+                    name="dueDate"
                     id="dueDate"
                     value={formData.dueDate}
                     onChange={handleChange}
-                 />
+                />
             </div>
 
             {/* form actions */}

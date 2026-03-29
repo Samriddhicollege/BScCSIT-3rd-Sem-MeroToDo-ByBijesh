@@ -16,7 +16,7 @@ export const TrashView = () => {
     const handleEmptyTrash = useCallback(() => {
         emptyTrash();
         setShowEmptyConfirm(false);
-    }, [emptyTrash, setShowEmptyConfirm]);
+    }, [emptyTrash]);
 
     return (
         <div className="page-container">

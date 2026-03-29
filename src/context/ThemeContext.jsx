@@ -22,7 +22,8 @@ export const ThemeProvider = ({ children }) => {
     );
 
     return (
-        <ThemeContext.Provider value={[theme, toggleTheme]}> //passing the value of context as an array
+        //passing the value of context as an object
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
             {children}
         </ThemeContext.Provider>
     )

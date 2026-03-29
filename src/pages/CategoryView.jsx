@@ -10,15 +10,16 @@ export const CategoryView = () => {
     const navigate = useNavigate()
     const { tasks, categories } = useTaskContext()
 
-    const category = useMemo(
-        () => categories.find(c => c.id === parseInt(id))
-        , [categories, id]
-    )
+    const category = useMemo(() => {
+        if (!id || isNaN(parseInt(id))) return null;
+        return categories.find(c => c.id === parseInt(id))
+    }, [categories, id])
 
-    const categoryTasks = useMemo(
-        () => tasks.filter(t => t.category === parseInt(id))
-        , [tasks, id]
-    )
+    const categoryTasks = useMemo(() => {
+        const categoryId = parseInt(id);
+        if (isNaN(categoryId)) return [];
+        return tasks.filter(t => t.category === categoryId);
+    }, [tasks, id])
 
     const activeTasks = useMemo(
         () => categoryTasks.filter(t => !t.completed)
@@ -50,7 +51,7 @@ export const CategoryView = () => {
         )
     }
 
-    
+
 
     return (
         <div className="page-container">
@@ -80,6 +81,7 @@ export const CategoryView = () => {
                         <TaskList
                             tasks={activeTasks}
                             onCategoryClick={handleCategoryClick}
+                            sortBy="priority"
                         />
                     )}
                 </section>

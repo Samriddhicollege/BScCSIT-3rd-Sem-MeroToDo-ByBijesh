@@ -6,7 +6,7 @@ import { PRIORITY_COLORS, PRIORITY_LABELS } from "../utils/constants";
 import { Modal } from "./Modal";
 import { TaskForm } from "./TaskForm";
 
-export const TaskItem = ({task, onCategoryClick}) => {
+export const TaskItem = ({ task, onCategoryClick }) => {
     const { updateTask, deleteTask, toggleTaskComplete, categories } = useTaskContext();
     const [showEditForm, setShowEditForm] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
@@ -27,7 +27,7 @@ export const TaskItem = ({task, onCategoryClick}) => {
         deleteTask(task.id)
         setShowConfirm(false)
     }
-    return(
+    return (
         <>
             <div className={`task-item ${task.completed ? "completed" : ""}`} >
                 <div className="task-content">
@@ -55,9 +55,9 @@ export const TaskItem = ({task, onCategoryClick}) => {
                             )}
                             <span
                                 className="priority-badge"
-                                style={{backgroundColor: PRIORITY_COLORS[task.priority]}}
+                                style={{ backgroundColor: PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.medium }}
                             >
-                                {PRIORITY_LABELS[task.priority]}
+                                {PRIORITY_LABELS[task.priority] || "Unknown"}
                             </span>
 
                             {task.dueDate && (
@@ -84,7 +84,7 @@ export const TaskItem = ({task, onCategoryClick}) => {
                         className="btn-icon btn-delete"
                         onClick={() => setShowConfirm(true)}
                         title="Delete Task"
-                        >
+                    >
                         🗑️
                     </button>
                 </div>
@@ -96,7 +96,7 @@ export const TaskItem = ({task, onCategoryClick}) => {
                 onClose={() => setShowEditForm(false)}
                 title="Edit Task"
             >
-                <TaskForm 
+                <TaskForm
                     initialTask={task}
                     onSave={handleUpdateTask}
                     onClose={() => setShowEditForm(false)}

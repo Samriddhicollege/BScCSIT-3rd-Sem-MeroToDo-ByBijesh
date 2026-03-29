@@ -45,6 +45,7 @@ const taskReducer = (state, action) => {
 
         case "DELETE_TASK":
             const taskToDelete = state.tasks.find(t => t.id === action.payload);
+            if (!taskToDelete) return state;  // Silently ignore if task not found
             return {
                 ...state,
                 tasks: state.tasks.filter(t => t.id !== action.payload),
@@ -53,6 +54,7 @@ const taskReducer = (state, action) => {
 
         case "RESTORE_TASK":
             const taskToRestore = state.trash.find(t => t.id === action.payload);
+            if (!taskToRestore) return state;  // Silently ignore if task not found
             const restoredTask = { ...taskToRestore };
             delete restoredTask.deletedAt;
             //The delete operator removes a property from an object.
@@ -61,7 +63,7 @@ const taskReducer = (state, action) => {
 
             return {
                 ...state,
-                tasks: [...state.tasks, taskToRestore],
+                tasks: [...state.tasks, restoredTask],
                 trash: state.trash.filter(t => t.id !== action.payload)
             }
 
