@@ -10,6 +10,25 @@ const initialState = {
     categories: DEFAULT_CATEGORIES,
 }
 
+const loadInitialState = () => {
+    try {
+        const savedTasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
+        const savedTrash = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRASH) || '[]');
+        const savedCategories = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.CATEGORIES) || JSON.stringify(DEFAULT_CATEGORIES)
+        );
+
+        return {
+            tasks: savedTasks,
+            trash: savedTrash,
+            categories: savedCategories,
+        };
+    } catch (error) {
+        console.log("Error loading initial state from localStorage:", error);
+        return initialState;
+    }
+};
+
 const taskReducer = (state, action) => {
     switch (action.type) {
         case "SET_INITIAL_STATE":
@@ -94,29 +113,10 @@ const taskReducer = (state, action) => {
 }
 
 export const TaskProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(taskReducer, initialState);
+    const [state, dispatch] = useReducer(taskReducer, loadInitialState()); //using loadInitialState fn to set the initial state of the reducer, this way we can load the state from localStorage when the app initializes
     const [, setTasksStorage] = useLocalStorage(STORAGE_KEYS.TASKS, []); // dong destructuring by [,settask] but only taking the fn rather than the stored value
     const [, setTrashStorage] = useLocalStorage(STORAGE_KEYS.TRASH, []);
     const [, setCategoriesStorage] = useLocalStorage(STORAGE_KEYS.CATEGORIES, DEFAULT_CATEGORIES);
-
-    //initialize state from localStorage on component mount
-    useEffect(() => {
-        const savedTasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]')
-        const savedTrash = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRASH) || '[]')
-        const savedCategories = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.CATEGORIES) || JSON.stringify(DEFAULT_CATEGORIES)
-        )
-        dispatch(
-            {
-                type: 'SET_INITIAL_STATE',
-                payload: {
-                    tasks: savedTasks,
-                    trash: savedTrash,
-                    categories: savedCategories,
-                },
-            }
-        )
-    }, [])
 
     //sync state changes to localStorage
     useEffect(() => {
@@ -182,7 +182,9 @@ export const TaskProvider = ({ children }) => {
                 categories: DEFAULT_CATEGORIES,
             },
         });
-        localStorage.clear();
+        localStorage.removeItem(STORAGE_KEYS.TASKS);
+        localStorage.removeItem(STORAGE_KEYS.TRASH);
+        localStorage.removeItem(STORAGE_KEYS.CATEGORIES);
     }, []);
 
     const value = {
