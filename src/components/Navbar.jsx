@@ -10,7 +10,7 @@ export const Navbar = () => {
     //in objecct destruccturing the names must match the retruning values (returning array for here) but order doesnt matter
     //in array destructuring , name doesnt matter but order matters
     const { toggleTheme, theme } = useTheme();
-    const { addTask, categories } = useTaskContext;
+    const { addTask, categories } = useTaskContext();
     const [showForm, setShowForm] = useState(false);
 
     const handleAddTask = (taskData) => {
@@ -58,9 +58,9 @@ export const Navbar = () => {
 
             {/*modal shows up only if the showForm is true */}
             <Modal isOpen={showForm} onClose={() => setShowForm(false)} title={"Add New Task"}> {/* the onclose is a callback fn , when the onclose is triggered in the modaljsx this fn runs here at navbar  */}
-                <TaskForm 
+                <TaskForm
                     onSave={handleAddTask}
-                    onClose={()=> setShowForm(false)}
+                    onClose={() => setShowForm(false)}
                     categories={categories}
                 />
             </Modal>

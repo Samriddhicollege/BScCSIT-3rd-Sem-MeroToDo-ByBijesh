@@ -6,7 +6,7 @@ import { PRIORITY_COLORS, PRIORITY_LABELS } from "../utils/constants";
 import { Modal } from "./Modal";
 import { TaskForm } from "./TaskForm";
 
-export const TaskItem = (task, onCategoryClick) => {
+export const TaskItem = ({task, onCategoryClick}) => {
     const { updateTask, deleteTask, toggleTaskComplete, categories } = useTaskContext();
     const [showEditForm, setShowEditForm] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
@@ -31,6 +31,7 @@ export const TaskItem = (task, onCategoryClick) => {
         <>
             <div className={`task-item ${task.completed ? "completed" : ""}`} >
                 <div className="task-content">
+                    {/* checkbox for marking task complete */}
                     <input
                         type="checkbox"
                         checked={task.completed}
@@ -38,6 +39,7 @@ export const TaskItem = (task, onCategoryClick) => {
                         aria-label={`Mark ${task.title} as ${task.completed ? "incomplete" : "complete"}`}
                     />
 
+                    {/* task details */}
                     <div className="task-text">
                         <h3 className="task-title">{task.title}</h3>
                         {task.description && <p className="task-description">{task.description}</p>}
@@ -51,22 +53,22 @@ export const TaskItem = (task, onCategoryClick) => {
                                     <CategoryBadge category={taskCategory} />
                                 </button>
                             )}
+                            <span
+                                className="priority-badge"
+                                style={{backgroundColor: PRIORITY_COLORS[task.priority]}}
+                            >
+                                {PRIORITY_LABELS[task.priority]}
+                            </span>
+
+                            {task.dueDate && (
+
+                                <span className={`due-date ${overdue ? "overdue-text" : ""}`}>
+                                    {overdue ? '⚠️ ' : '📅 '}
+                                    {formatDate(task.dueDate)}
+                                </span>
+                            )}
                         </div>
 
-                        <span
-                            className="priority-badge"
-                            style={{backgroundColor: PRIORITY_COLORS[task.priority]}}
-                        >
-                            {PRIORITY_LABELS[task.priority]}
-                        </span>
-
-                        {task.dueDate && (
-
-                            <span className={`due-date ${overdue ? "overdue-text" : ""}`}>
-                                {overdue ? '⚠️ ' : '📅 '}
-                                {formatDate(task.dueDate)}
-                            </span>
-                        )}
                     </div>
                 </div>
 
@@ -80,7 +82,7 @@ export const TaskItem = (task, onCategoryClick) => {
                     </button>
                     <button
                         className="btn-icon btn-delete"
-                        onClick={() => setShowEditForm(true)}
+                        onClick={() => setShowConfirm(true)}
                         title="Delete Task"
                         >
                         🗑️
@@ -109,13 +111,13 @@ export const TaskItem = (task, onCategoryClick) => {
                 title="Delete Task?"
             >
                 <div className="confirm-dialog">
-                    <p>This task will be moved to trash</p>
+                    <p>Are you sure you want to delete "{task.title}"? You can restore it from the trash.</p>
                     <div className="confirm-actions">
-                        <button className="btn-confirm" onClick={handleDelete}>
-                            Delete
-                        </button>
                         <button className="btn-cancel" onClick={() => setShowConfirm(false)}>
                             Cancel
+                        </button>
+                        <button className="btn-delete-confirm" onClick={handleDelete}>
+                            Delete
                         </button>
                     </div>
                 </div>

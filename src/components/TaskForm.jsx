@@ -7,36 +7,37 @@ export const TaskForm = ({onSave, onClose, initialTask = null, categories = []} 
         initialTask || {
             title: "",
             description: "",
-            category: categories[0]?.id || 1,
+            category: categories[0]?.id || 1, //if there are categories, set the default category to the first one, otherwise set it to 1 (which is the id of default work category)
+            // ?. is optional chaining, it checks if categories[0] exists before trying to access its id property, preventing errors if the categories array is empty. if categories[0] is undefined, then categories[0]?.id will also be undefined, and the default value will be 1
             priority: PRIORITIES.MEDIUM,
             dueDate: "",
         }
     );
 
-    const [newCategoryName, setNewCategoryName] = useState("")
-    const [showNewCategory, SetShowNewCategory] = useState(false)
     const [errors, setErrors] = useState({})
 
     const selectedCategory = categories.find( c => c.id === parseInt(formData.category))
 
     const handleChange = (e) => {
         const {name, value} = e.target;
-        setFormData(prev => ({
+        setFormData(prev => ({ //here we are using () => ({}) for implicit return
             ...prev,
-            [name] : value
+            [name] : value //[name] is a bracket notation for dynamic object keys. 
+            // [name] uses the VALUE of the name variable as the key
+            //if name = "title" in input tag, then [name] : value will be title: value, which will update the formData.title 
         }))
-        if (errors[name]) {
-            setErrors(prev => ({...prev, [name]: ""}))
+        if (errors[name]) { //its like error["title"], so this will look up for title key in object, if title exists then its sure that the title was empty
+            setErrors(prev => ({...prev, [name]: ""})) // Clear error for the field as user types
         }
     }
 
     const validateForm = () => {
         const newErrors = {}
-        if (!formData.title.trim()) {
-            newErrors.title = "Title is required"
+        if (!formData.title.trim()) { //trim removes whitespace from both ends of a string, so if the title is empty or just spaces, formatData.title will be an empty string after trim which is falsy value, so !falsyvalue = true casuing errors state updated with title
+            newErrors.title = "Title is required" //this is dynamic property assignment, even if the title key doesnt exist in newerrors, we can create it by assigning it
         }
         setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
+        return Object.keys(newErrors).length === 0 //object,keys returns an array of keys in the object, so if the length is 0(i.e. title key doesnt exist for errors state), it means there are no errors
     }
 
     const handleSubmit = (e) => {
@@ -98,8 +99,8 @@ export const TaskForm = ({onSave, onClose, initialTask = null, categories = []} 
             <div className="form-group">
                     <label >Priority</label>
                     <div className="priority-options">
-                        {Object.entries(PRIORITIES).map(([key, value]) => (
-                            <label key={value} className="priority-label">
+                        {Object.entries(PRIORITIES).map(([key, value]) => ( //object.entries returns an array of key-value pairs
+                            <label key={value} className="priority-label"> {/*key = {value} is for identifying each label uniquely */}
                                 <input 
                                     type="radio"
                                     name="priority"

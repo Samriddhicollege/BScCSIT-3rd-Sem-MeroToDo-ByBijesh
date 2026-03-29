@@ -1,53 +1,46 @@
 import { useMemo } from "react"
-import { sortTasksByDueDate, sortTasksByPriority } from "../utils/helper"
+import { filterTasksBySearchTerm, sortTasksByDueDate, sortTasksByPriority } from "../utils/helper"
 import { TaskItem } from "./TaskItem"
+import { useDebounce } from "../hooks/useDebounce"
 
 export const TaskList = ({
 
     tasks,
     onCategoryClick,
+    searchTerm = "",
     sortBy = "priority",
-    filterCompleted = false,
 }) => {
 
-    const filteredAndSortedTasks = useMemo(() => {
-        let result = [...tasks]
+    //debouncing the search term to avoid excessive filtering while user is typing
+    const debouncedSearchTerm = useDebounce(searchTerm, 300)    
 
-        //filter completed tasks if needed
-        if (filterCompleted === "completed") {
-            result = result.filter(t => t.completed)
-        }
-        else if(filterCompleted === "active"){
-            result = result.filter(t => !t.completed)
-        }
+    const processedTasks = useMemo(() => {
+        let result = filterTasksBySearchTerm(tasks, debouncedSearchTerm)
 
-        //sort by selevted options
-        if (sortBy === "priority") {
+        if (sortBy === 'priority') {
             result = sortTasksByPriority(result)
-        }
-        else if(sortBy === "dueDate"){
+        } 
+        else if (sortBy === "dueDate") {
             result = sortTasksByDueDate(result)
         }
-        else if(sortBy === "recent"){
-            result = result.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-        }
-
         return result
-    }, [tasks, sortBy, filterCompleted] )
+    } , [tasks, debouncedSearchTerm, sortBy])
 
-    if (!filteredAndSortedTasks || filteredAndSortedTasks.length === 0) {
-        return ( 
-            <div className="task-list-empty">
-                <p>No tasks yet. Create one to get started!</p> 
-            </div>
+    if (processedTasks.length === 0) {
+        return (
+            <div className="empty-state">
+            <p className="empty-message">
+                {debouncedSearchTerm ? 'No tasks match your search.' : 'No tasks yet. Create one to get started!'}
+            </p>
+        </div>
         )
     }
 
     return (
         <div className="task-list">
-            {filteredAndSortedTasks.map(task => (
+            {processedTasks.map(task => (
                 <TaskItem 
-                    key={task.id}
+                    key={task.id} //this is not a regular prop, rather its a special prop in react that helps in optimizing the rendering of lists by giving each item a unique identifier
                     task={task}
                     onCategoryClick={onCategoryClick}
                 />
