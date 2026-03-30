@@ -50,6 +50,11 @@ export const Navbar = () => {
                             </Link>
                         </li>
                         <li>
+                            <Link to={"/category/:id"} onClick={handleNavClick}>
+                                Category
+                            </Link>
+                        </li>
+                        <li>
                             <Link to={"/trash"} onClick={handleNavClick}>
                                 Trash
                             </Link>
